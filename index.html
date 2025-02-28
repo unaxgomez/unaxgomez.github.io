@@ -10,7 +10,7 @@
       rel="stylesheet"
     />
     <title>NoteSnap by Unax Gómez</title>
-    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <link rel="icon" type="image/x-icon" href="favicon.png" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/paper@0.12.6/dist/paper-full.js"></script>
     <style>
@@ -111,13 +111,20 @@
         position: fixed;
         bottom: 48px;
         left: 48px;
+        img {
+            opacity: 0.5;
+        }
+      }
+
+      .auth-container {
         display: flex;
         flex-direction: column;
         gap: 8px;
         opacity: 0.2;
       }
 
-      a, h3 {
+      a,
+      h3 {
         color: white;
         text-decoration: none;
         font-weight: 400;
@@ -128,7 +135,6 @@
       h1 {
         font-size: 20px;
         color: white;
-
       }
 
       .watermark {
@@ -340,48 +346,47 @@
       }
 
       #toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-}
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+      }
 
-.toast {
-    background-color: #ffcbd3;
-    color: #FF3553;
-    border: 1px solid #FF3553;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    margin-bottom: 10px;
-}
-.toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
+      .toast {
+        background-color: #ffcbd3;
+        color: #ff3553;
+        border: 1px solid #ff3553;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        margin-bottom: 10px;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-/* Para pantallas pequeñas (móviles muy pequeños) */
-@media (max-width: 480px) {
-    .draw-text {
-        display: none;
-    }
+      /* Para pantallas pequeñas (móviles muy pequeños) */
+      @media (max-width: 480px) {
+        .draw-text {
+          display: none;
+        }
 
-    .watermark {
-        bottom: 32px;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 200px;
-    }
+        .watermark {
+          bottom: 32px;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 200px;
+        }
 
-    .title-container {
-        top: 32px;
-    }
-}
-
+        .title-container {
+          top: 32px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -389,11 +394,22 @@
       <div class="background">
         <div id="toast-container"></div>
         <div class="title-container">
-            <img class="icon-image" src="icon_notesnap.svg">
-            <h1 class="web-title">NoteSnap <br> by Unax Gómez</h1>
-            <h3 class="subtitle">Check out my other page: <a href="https://unaxgomez.framer.ai/" target="_blank">Here</a></h3>
+          <img class="icon-image" src="icon_notesnap.svg" />
+          <div class="auth-container">
+              <h1 class="web-title">
+                NoteSnap <br />
+                by Unax Gómez
+              </h1>
+              <h3 class="subtitle">
+                Check out my other page:
+                <a href="https://unaxgomez.framer.ai/" target="_blank">Here</a>
+              </h3>
+          </div>
         </div>
-        <p class="watermark">Please do not use offensive language or misuse the page. Thank you! | Unax Gómez. 2025.</p>
+        <p class="watermark">
+          Please do not use offensive language or misuse the page. Thank you! |
+          Unax Gómez. 2025.
+        </p>
         <div id="note-creator">
           <div class="create-container">
             <div class="deployer">
@@ -406,7 +422,7 @@
                 id="message-input"
                 placeholder="Type something..."
               ></textarea>
-              <img class="draw-text" src="draw_text.svg">
+              <img class="draw-text" src="draw_text.svg" />
               <canvas id="drawing-canvas"></canvas>
               <button id="save-note-btn">Publish note</button>
             </div>
@@ -422,27 +438,25 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         const noteCreator = document.getElementById("note-creator");
-const deployer = document.querySelector(".deployer");
-const chevron = deployer.querySelector("img"); // Seleccionamos el chevron (la imagen)
+        const deployer = document.querySelector(".deployer");
+        const chevron = deployer.querySelector("img"); // Seleccionamos el chevron (la imagen)
 
-if (noteCreator && deployer && chevron) {
-  // Inicialmente plegado
-  noteCreator.style.bottom = "-325px"; // Oculta la card fuera de la pantalla
-  noteCreator.style.transition = "bottom 0.3s ease-in-out";
-  chevron.style.transition = "transform 0.3s ease-in-out"; // Añadimos una transición para la rotación
+        if (noteCreator && deployer && chevron) {
+          // Inicialmente plegado
+          noteCreator.style.bottom = "-325px"; // Oculta la card fuera de la pantalla
+          noteCreator.style.transition = "bottom 0.3s ease-in-out";
+          chevron.style.transition = "transform 0.3s ease-in-out"; // Añadimos una transición para la rotación
 
-  deployer.addEventListener("click", function () {
-    if (noteCreator.style.bottom === "0px") {
-      noteCreator.style.bottom = "-325px"; // Baja la card
-      chevron.style.transform = "rotate(0deg)"; // Rota el chevron a su posición original
-    } else {
-      noteCreator.style.bottom = "0px"; // Sube la card
-      chevron.style.transform = "rotate(180deg)"; // Rota el chevron 180 grados
-    }
-  });
-}
-
-
+          deployer.addEventListener("click", function () {
+            if (noteCreator.style.bottom === "0px") {
+              noteCreator.style.bottom = "-325px"; // Baja la card
+              chevron.style.transform = "rotate(0deg)"; // Rota el chevron a su posición original
+            } else {
+              noteCreator.style.bottom = "0px"; // Sube la card
+              chevron.style.transform = "rotate(180deg)"; // Rota el chevron 180 grados
+            }
+          });
+        }
       });
 
       function makeDraggable(note) {
@@ -571,63 +585,49 @@ if (noteCreator && deployer && chevron) {
       };
 
       async function saveNote() {
-    const name = document.getElementById("name-input").value;
-    const message = document.getElementById("message-input").value;
+  const name = document.getElementById("name-input").value;
+  const message = document.getElementById("message-input").value;
 
-    // Convierte el dibujo a imagen
-    const dataUrl = paper.view.element.toDataURL(); // Obtener la imagen del lienzo
-
-    if (!name || !message) {
+  if (!name || !message) {
     showToast("Please fill all the info");
     return;
-}
+  }
 
-function showToast(message) {
-    // Crear el toast
-    const toast = document.createElement("div");
-    toast.classList.add("toast");
-    toast.textContent = message;
+  // Obtener la imagen del lienzo
+  const dataUrl = paper.view.element.toDataURL();
 
-    // Añadirlo al contenedor de toasts
-    const toastContainer = document.getElementById("toast-container");
-    toastContainer.appendChild(toast);
+  // Crear un nuevo canvas temporal para comparar si hay dibujo
+  const tempCanvas = document.createElement("canvas");
+  tempCanvas.width = paper.view.element.width;
+  tempCanvas.height = paper.view.element.height;
+  const tempCtx = tempCanvas.getContext("2d");
 
-    // Mostrar el toast
-    setTimeout(() => {
-        toast.classList.add("show");
-    }, 100); // Añadir la clase después de un pequeño retraso para la animación
+  // Obtener la imagen en blanco del canvas vacío
+  const blankDataUrl = tempCanvas.toDataURL();
 
-    // Ocultar el toast después de 5 segundos
-    setTimeout(() => {
-        toast.classList.remove("show");
-        // Eliminar el toast después de que la animación termine
-        setTimeout(() => {
-            toast.remove();
-        }, 300); // Tiempo de duración de la animación
-    }, 5000); // 5 segundos
-}
+  // Si el canvas no tiene dibujo, no guardar la imagen
+  const noteData = { name, message };
+  if (dataUrl !== blankDataUrl) {
+    noteData.image = dataUrl;
+  }
 
+  const { data, error } = await supabase.from("notes").insert([noteData]).select();
 
-    const { data, error } = await supabase
-        .from("notes")
-        .insert([{ name, message, image: dataUrl }])
-        .select(); // Esto devuelve la nueva nota insertada
+  if (error) {
+    console.error("Error al guardar la nota:", error);
+  } else {
+    console.log("Nota guardada correctamente:", data);
 
-    if (error) {
-        console.error("Error al guardar la nota:", error);
-    } else {
-        console.log("Nota guardada correctamente:", data);
-        
-        // Limpiar inputs y canvas
-        document.getElementById("name-input").value = "";
-        document.getElementById("message-input").value = "";
-        paper.project.clear(); 
+    // Limpiar inputs y canvas
+    document.getElementById("name-input").value = "";
+    document.getElementById("message-input").value = "";
+    paper.project.clear();
 
-        // Agregar la nota recién creada al DOM inmediatamente
-        if (data && data.length > 0) {
-            addNoteToBoard(data[0]); 
-        }
+    // Agregar la nota recién creada al DOM inmediatamente
+    if (data && data.length > 0) {
+      addNoteToBoard(data[0]);
     }
+  }
 }
 
 
@@ -669,43 +669,45 @@ function showToast(message) {
         )
         .subscribe();
 
-        function addNoteToBoard(note) {
-    const div = document.createElement("div");
-    div.classList.add("note");
+      function addNoteToBoard(note) {
+        const div = document.createElement("div");
+        div.classList.add("note");
 
-    // Establecer la rotación y escala inicial en 0
-    const rotationValue = (Math.random() * 20 - 10).toFixed(2); // Generar rotación aleatoria entre -10 y 10 grados
-    div.style.transform = `scale(0) rotate(${rotationValue}deg)`;
-    div.style.transition = "transform 0.3s ease-in-out"; // Transición suave para rotación y escala
+        // Establecer la rotación y escala inicial en 0
+        const rotationValue = (Math.random() * 20 - 10).toFixed(2); // Generar rotación aleatoria entre -10 y 10 grados
+        div.style.transform = `scale(0) rotate(${rotationValue}deg)`;
+        div.style.transition = "transform 0.3s ease-in-out"; // Transición suave para rotación y escala
 
-    // Establecer la posición de la nota
-    const noteWidth = 200; // Ajusta según el tamaño de tus notas
-    const noteHeight = 150;
-    const maxX = window.innerWidth - noteWidth - 50;
-    const maxY = window.innerHeight - noteHeight - 50;
-    const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
+        // Establecer la posición de la nota
+        const noteWidth = 200; // Ajusta según el tamaño de tus notas
+        const noteHeight = 150;
+        const maxX = window.innerWidth - noteWidth - 50;
+        const maxY = window.innerHeight - noteHeight - 50;
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
 
-    div.style.left = `${randomX}px`;
-    div.style.top = `${randomY}px`;
+        div.style.left = `${randomX}px`;
+        div.style.top = `${randomY}px`;
 
-    div.innerHTML = `
-        <img class="image" src="${note.image}" width="100%">
+        div.innerHTML = `
+        ${
+          note.image
+            ? `<img class="image" src="${note.image}" width="100%">`
+            : ""
+        }
         <p class="name">${note.name}</p>
         <p class="message">${note.message}</p>
     `;
 
-    document.getElementById("board").appendChild(div);
-    
-    // Pequeño delay para que la transición ocurra después de la inserción en el DOM
-    setTimeout(() => {
-        div.style.transform = `scale(1) rotate(${rotationValue}deg)`; // Escala y mantiene la rotación
-    }, 10);
+        document.getElementById("board").appendChild(div);
 
-    makeDraggable(div);
-}
+        // Pequeño delay para que la transición ocurra después de la inserción en el DOM
+        setTimeout(() => {
+          div.style.transform = `scale(1) rotate(${rotationValue}deg)`; // Escala y mantiene la rotación
+        }, 10);
 
-
+        makeDraggable(div);
+      }
     </script>
   </body>
 </html>
