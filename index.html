@@ -228,7 +228,12 @@
         border-radius: 8px;
         border: 1px solid #e2e2e2;
         box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease-in-out;
       }
+
+        .note:hover {
+        transform: scale(1.1) !important;
+        }
 
       #note-creator {
         bottom: -325px;
@@ -457,6 +462,20 @@
           });
         }
       });
+
+      document.addEventListener("DOMContentLoaded", function () {
+  let highestZIndex = 1;
+
+  document.querySelectorAll(".note").forEach((note) => {
+    note.addEventListener("mousedown", () => {
+      note.style.zIndex = ++highestZIndex; // Aumenta el z-index y lo aplica
+    });
+
+    note.addEventListener("touchstart", () => {
+      note.style.zIndex = ++highestZIndex; // También para dispositivos táctiles
+    });
+  });
+});
 
       function makeDraggable(note) {
   let isDragging = false;
