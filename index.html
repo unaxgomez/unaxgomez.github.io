@@ -459,94 +459,110 @@
       });
 
       function makeDraggable(note) {
-        let isDragging = false;
-        let offsetX, offsetY;
-        let lastX, lastY;
-        let velocityX = 0,
-          velocityY = 0; // Velocidades de inercia
-        let finalRotation = null; // Variable para almacenar la rotación final
+  let isDragging = false;
+  let offsetX, offsetY;
+  let lastX, lastY;
+  let velocityX = 0, velocityY = 0;
+  let finalRotation = null;
 
-        note.style.transform = `rotate(${(Math.random() * 20 - 10).toFixed(
-          2
-        )}deg)`; // Rotar una vez al inicio
+  note.style.transform = `rotate(${(Math.random() * 20 - 10).toFixed(2)}deg)`;
 
-        note.addEventListener("mousedown", (e) => {
-          isDragging = true;
-          offsetX = e.clientX - note.getBoundingClientRect().left;
-          offsetY = e.clientY - note.getBoundingClientRect().top;
-          lastX = e.clientX;
-          lastY = e.clientY;
-          velocityX = 0;
-          velocityY = 0;
-          note.style.transition = "none"; // Desactiva la transición mientras se arrastra
-          note.style.userSelect = "none"; // Desactiva la selección de texto
+  function startDrag(e) {
+    isDragging = true;
 
-          // Resetear la rotación aleatoria cuando se empieza a mover
-          finalRotation = (Math.random() * 20 - 10).toFixed(2); // Generar nueva rotación aleatoria
-        });
+    let clientX, clientY;
+    if (e.type === "mousedown") {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else if (e.type === "touchstart") {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
 
-        document.addEventListener("mousemove", (e) => {
-          if (!isDragging) return;
+    offsetX = clientX - note.getBoundingClientRect().left;
+    offsetY = clientY - note.getBoundingClientRect().top;
+    lastX = clientX;
+    lastY = clientY;
+    velocityX = 0;
+    velocityY = 0;
+    note.style.transition = "none";
+    note.style.userSelect = "none";
 
-          // Calculamos el movimiento
-          let newX = e.clientX - offsetX;
-          let newY = e.clientY - offsetY;
+    finalRotation = (Math.random() * 20 - 10).toFixed(2);
+  }
 
-          // Limitar el movimiento dentro de los límites permitidos (50px fuera del viewport)
-          const maxX = window.innerWidth - note.offsetWidth - 50;
-          const maxY = window.innerHeight - note.offsetHeight - 50;
+  function drag(e) {
+    if (!isDragging) return;
 
-          // Evitar que se mueva fuera del área permitida
-          newX = Math.min(Math.max(newX, -50), maxX);
-          newY = Math.min(Math.max(newY, -50), maxY);
+    let clientX, clientY;
+    if (e.type === "mousemove") {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else if (e.type === "touchmove") {
+      e.preventDefault(); // Evita el scroll mientras se arrastra
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
 
-          note.style.left = `${newX}px`;
-          note.style.top = `${newY}px`;
+    let newX = clientX - offsetX;
+    let newY = clientY - offsetY;
 
-          // Calcular la velocidad en base al desplazamiento
-          velocityX = (e.clientX - lastX) * 0.1; // Factor de suavizado
-          velocityY = (e.clientY - lastY) * 0.1;
-          lastX = e.clientX;
-          lastY = e.clientY;
-        });
+    const maxX = window.innerWidth - note.offsetWidth - 50;
+    const maxY = window.innerHeight - note.offsetHeight - 50;
 
-        document.addEventListener("mouseup", () => {
-          if (isDragging) {
-            isDragging = false;
-            note.style.transition =
-              "transform 0.3s ease-out, left 0.3s ease-out, top 0.3s ease-out"; // Transición suave
+    newX = Math.min(Math.max(newX, -50), maxX);
+    newY = Math.min(Math.max(newY, -50), maxY);
 
-            // Deslizarse con inercia
-            const inertia = setInterval(() => {
-              if (Math.abs(velocityX) < 1 && Math.abs(velocityY) < 1) {
-                clearInterval(inertia); // Detener el movimiento cuando la velocidad sea baja
-              }
+    note.style.left = `${newX}px`;
+    note.style.top = `${newY}px`;
 
-              // Aplicar la inercia
-              let newX = parseFloat(note.style.left || 0) + velocityX;
-              let newY = parseFloat(note.style.top || 0) + velocityY;
+    velocityX = (clientX - lastX) * 0.1;
+    velocityY = (clientY - lastY) * 0.1;
+    lastX = clientX;
+    lastY = clientY;
+  }
 
-              // Limitar el movimiento dentro de los límites permitidos
-              const maxX = window.innerWidth - note.offsetWidth - 50;
-              const maxY = window.innerHeight - note.offsetHeight - 50;
+  function stopDrag() {
+    if (isDragging) {
+      isDragging = false;
+      note.style.transition =
+        "transform 0.3s ease-out, left 0.3s ease-out, top 0.3s ease-out";
 
-              newX = Math.min(Math.max(newX, -50), maxX);
-              newY = Math.min(Math.max(newY, -50), maxY);
+      const inertia = setInterval(() => {
+        if (Math.abs(velocityX) < 1 && Math.abs(velocityY) < 1) {
+          clearInterval(inertia);
+        }
 
-              note.style.left = `${newX}px`;
-              note.style.top = `${newY}px`;
+        let newX = parseFloat(note.style.left || 0) + velocityX;
+        let newY = parseFloat(note.style.top || 0) + velocityY;
 
-              // Reducir la velocidad para simular la inercia
-              velocityX *= 0.95; // Desaceleración
-              velocityY *= 0.95;
-            }, 16); // Intervalo para actualizar el movimiento (aproximadamente 60fps)
+        const maxX = window.innerWidth - note.offsetWidth - 50;
+        const maxY = window.innerHeight - note.offsetHeight - 50;
 
-            // Aplicar la rotación final de manera suave
-            note.style.transform = `rotate(${finalRotation}deg)`; // Rotar al soltar
-            note.style.userSelect = "auto"; // Restaurar la selección de texto al soltar el clic
-          }
-        });
-      }
+        newX = Math.min(Math.max(newX, -50), maxX);
+        newY = Math.min(Math.max(newY, -50), maxY);
+
+        note.style.left = `${newX}px`;
+        note.style.top = `${newY}px`;
+
+        velocityX *= 0.95;
+        velocityY *= 0.95;
+      }, 16);
+
+      note.style.transform = `rotate(${finalRotation}deg)`;
+      note.style.userSelect = "auto";
+    }
+  }
+
+  note.addEventListener("mousedown", startDrag);
+  document.addEventListener("mousemove", drag);
+  document.addEventListener("mouseup", stopDrag);
+
+  note.addEventListener("touchstart", startDrag);
+  document.addEventListener("touchmove", drag, { passive: false }); // `passive: false` permite usar preventDefault
+  document.addEventListener("touchend", stopDrag);
+}
+
 
       document
         .getElementById("save-note-btn")
