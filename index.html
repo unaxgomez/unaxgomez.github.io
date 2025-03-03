@@ -112,7 +112,7 @@
         bottom: 48px;
         left: 48px;
         img {
-            opacity: 0.5;
+          opacity: 0.5;
         }
       }
 
@@ -231,9 +231,9 @@
         transition: transform 0.2s ease-in-out;
       }
 
-        .note:hover {
+      .note:hover {
         transform: scale(1.1) !important;
-        }
+      }
 
       #note-creator {
         bottom: -325px;
@@ -401,14 +401,14 @@
         <div class="title-container">
           <img class="icon-image" src="icon_notesnap.svg" />
           <div class="auth-container">
-              <h1 class="web-title">
-                NoteSnap <br />
-                by Unax Gómez
-              </h1>
-              <h3 class="subtitle">
-                Check out my other page:
-                <a href="https://unaxgomez.framer.ai/" target="_blank">Here</a>
-              </h3>
+            <h1 class="web-title">
+              NoteSnap <br />
+              by Unax Gómez
+            </h1>
+            <h3 class="subtitle">
+              Check out my other page:
+              <a href="https://unaxgomez.framer.ai/" target="_blank">Here</a>
+            </h3>
           </div>
         </div>
         <p class="watermark">
@@ -463,125 +463,113 @@
         }
       });
 
-      document.addEventListener("DOMContentLoaded", function () {
-  let highestZIndex = 1;
-
-  document.querySelectorAll(".note").forEach((note) => {
-    note.addEventListener("mousedown", () => {
-      note.style.zIndex = ++highestZIndex; // Aumenta el z-index y lo aplica
-    });
-
-    note.addEventListener("touchstart", () => {
-      note.style.zIndex = ++highestZIndex; // También para dispositivos táctiles
-    });
-  });
-});
-
       function makeDraggable(note) {
-  let isDragging = false;
-  let offsetX, offsetY;
-  let lastX, lastY;
-  let velocityX = 0, velocityY = 0;
-  let finalRotation = null;
+        let isDragging = false;
+        let offsetX, offsetY;
+        let lastX, lastY;
+        let velocityX = 0,
+          velocityY = 0;
+        let finalRotation = null;
 
-  note.style.transform = `rotate(${(Math.random() * 20 - 10).toFixed(2)}deg)`;
+        note.style.transform = `rotate(${(Math.random() * 20 - 10).toFixed(
+          2
+        )}deg)`;
 
-  function startDrag(e) {
-    isDragging = true;
+        function startDrag(e) {
+          isDragging = true;
 
-    let clientX, clientY;
-    if (e.type === "mousedown") {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    } else if (e.type === "touchstart") {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    }
+          let clientX, clientY;
+          if (e.type === "mousedown") {
+            clientX = e.clientX;
+            clientY = e.clientY;
+          } else if (e.type === "touchstart") {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+          }
 
-    offsetX = clientX - note.getBoundingClientRect().left;
-    offsetY = clientY - note.getBoundingClientRect().top;
-    lastX = clientX;
-    lastY = clientY;
-    velocityX = 0;
-    velocityY = 0;
-    note.style.transition = "none";
-    note.style.userSelect = "none";
+          offsetX = clientX - note.getBoundingClientRect().left;
+          offsetY = clientY - note.getBoundingClientRect().top;
+          lastX = clientX;
+          lastY = clientY;
+          velocityX = 0;
+          velocityY = 0;
+          note.style.transition = "none";
+          note.style.userSelect = "none";
 
-    finalRotation = (Math.random() * 20 - 10).toFixed(2);
-  }
-
-  function drag(e) {
-    if (!isDragging) return;
-
-    let clientX, clientY;
-    if (e.type === "mousemove") {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    } else if (e.type === "touchmove") {
-      e.preventDefault(); // Evita el scroll mientras se arrastra
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    }
-
-    let newX = clientX - offsetX;
-    let newY = clientY - offsetY;
-
-    const maxX = window.innerWidth - note.offsetWidth - 50;
-    const maxY = window.innerHeight - note.offsetHeight - 50;
-
-    newX = Math.min(Math.max(newX, -50), maxX);
-    newY = Math.min(Math.max(newY, -50), maxY);
-
-    note.style.left = `${newX}px`;
-    note.style.top = `${newY}px`;
-
-    velocityX = (clientX - lastX) * 0.1;
-    velocityY = (clientY - lastY) * 0.1;
-    lastX = clientX;
-    lastY = clientY;
-  }
-
-  function stopDrag() {
-    if (isDragging) {
-      isDragging = false;
-      note.style.transition =
-        "transform 0.3s ease-out, left 0.3s ease-out, top 0.3s ease-out";
-
-      const inertia = setInterval(() => {
-        if (Math.abs(velocityX) < 1 && Math.abs(velocityY) < 1) {
-          clearInterval(inertia);
+          finalRotation = (Math.random() * 20 - 10).toFixed(2);
         }
 
-        let newX = parseFloat(note.style.left || 0) + velocityX;
-        let newY = parseFloat(note.style.top || 0) + velocityY;
+        function drag(e) {
+          if (!isDragging) return;
 
-        const maxX = window.innerWidth - note.offsetWidth - 50;
-        const maxY = window.innerHeight - note.offsetHeight - 50;
+          let clientX, clientY;
+          if (e.type === "mousemove") {
+            clientX = e.clientX;
+            clientY = e.clientY;
+          } else if (e.type === "touchmove") {
+            e.preventDefault(); // Evita el scroll mientras se arrastra
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+          }
 
-        newX = Math.min(Math.max(newX, -50), maxX);
-        newY = Math.min(Math.max(newY, -50), maxY);
+          let newX = clientX - offsetX;
+          let newY = clientY - offsetY;
 
-        note.style.left = `${newX}px`;
-        note.style.top = `${newY}px`;
+          const maxX = window.innerWidth - note.offsetWidth - 50;
+          const maxY = window.innerHeight - note.offsetHeight - 50;
 
-        velocityX *= 0.95;
-        velocityY *= 0.95;
-      }, 16);
+          newX = Math.min(Math.max(newX, -50), maxX);
+          newY = Math.min(Math.max(newY, -50), maxY);
 
-      note.style.transform = `rotate(${finalRotation}deg)`;
-      note.style.userSelect = "auto";
-    }
-  }
+          note.style.left = `${newX}px`;
+          note.style.top = `${newY}px`;
 
-  note.addEventListener("mousedown", startDrag);
-  document.addEventListener("mousemove", drag);
-  document.addEventListener("mouseup", stopDrag);
+          velocityX = (clientX - lastX) * 0.1;
+          velocityY = (clientY - lastY) * 0.1;
+          lastX = clientX;
+          lastY = clientY;
+        }
 
-  note.addEventListener("touchstart", startDrag);
-  document.addEventListener("touchmove", drag, { passive: false }); // `passive: false` permite usar preventDefault
-  document.addEventListener("touchend", stopDrag);
-}
+        function stopDrag() {
+          if (isDragging) {
+            isDragging = false;
+            note.style.transition =
+              "transform 0.3s ease-out, left 0.3s ease-out, top 0.3s ease-out";
 
+            const inertia = setInterval(() => {
+              if (Math.abs(velocityX) < 1 && Math.abs(velocityY) < 1) {
+                clearInterval(inertia);
+              }
+
+              let newX = parseFloat(note.style.left || 0) + velocityX;
+              let newY = parseFloat(note.style.top || 0) + velocityY;
+
+              const maxX = window.innerWidth - note.offsetWidth - 50;
+              const maxY = window.innerHeight - note.offsetHeight - 50;
+
+              newX = Math.min(Math.max(newX, -50), maxX);
+              newY = Math.min(Math.max(newY, -50), maxY);
+
+              note.style.left = `${newX}px`;
+              note.style.top = `${newY}px`;
+
+              velocityX *= 0.95;
+              velocityY *= 0.95;
+            }, 16);
+
+            note.style.transform = `rotate(${finalRotation}deg)`;
+            note.style.userSelect = "auto";
+          }
+        }
+
+        note.addEventListener("mousedown", startDrag);
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("mouseup", stopDrag);
+
+        note.addEventListener("touchstart", startDrag);
+        document.addEventListener("touchmove", drag, { passive: false }); // `passive: false` permite usar preventDefault
+        document.addEventListener("touchend", stopDrag);
+      }
 
       document
         .getElementById("save-note-btn")
@@ -618,6 +606,8 @@
         path.smooth(); // Suaviza al final del trazo
       };
 
+      
+
       async function saveNote() {
   const name = document.getElementById("name-input").value;
   const message = document.getElementById("message-input").value;
@@ -645,6 +635,7 @@
     noteData.image = dataUrl;
   }
 
+  // Guardar en Supabase
   const { data, error } = await supabase.from("notes").insert([noteData]).select();
 
   if (error) {
@@ -660,6 +651,19 @@
     // Agregar la nota recién creada al DOM inmediatamente
     if (data && data.length > 0) {
       addNoteToBoard(data[0]);
+
+      // 🔹 Enviar los datos a Zapier **después de guardar la nota**
+      fetch("https://hooks.zapier.com/hooks/catch/21898838/2gjidz3/", {
+  method: "POST",
+  body: JSON.stringify({
+    name: data[0].name,
+    message: data[0].message,
+  }),
+})
+
+        .then(response => response.json())
+        .then(responseData => console.log("Respuesta de Zapier:", responseData))
+        .catch(error => console.error("Error al enviar a Zapier:", error));
     }
   }
 }
@@ -691,17 +695,6 @@
 
       loadNotes();
 
-      supabase
-        .channel("notes")
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "notes" },
-          (payload) => {
-            console.log("Nueva nota recibida:", payload.new);
-            addNoteToBoard(payload.new);
-          }
-        )
-        .subscribe();
 
       function addNoteToBoard(note) {
         const div = document.createElement("div");
